@@ -1,0 +1,67 @@
+﻿@model HospitalWeb.Models.Appointment
+
+@{
+    ViewData["Title"] = "Programare Nouă";
+}
+
+<h1>Creează</h1>
+<h4>Programare</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* 1. DATA SI ORA *@
+            <div class="form-group mb-3">
+                <label asp-for="AppointmentDate" class="control-label fw-bold">Data și Ora</label>
+                <input asp-for="AppointmentDate" class="form-control" />
+                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+            </div>
+
+            @* 2. SELECTARE DOCTOR *@
+            <div class="form-group mb-3">
+                <label asp-for="DoctorId" class="control-label fw-bold">Doctor</label>
+                <select asp-for="DoctorId" class="form-select" asp-items="ViewBag.DoctorId">
+                    <option value="">-- Alege un medic --</option>
+                </select>
+                <span asp-validation-for="DoctorId" class="text-danger"></span>
+            </div>
+
+            @* 3. LOGICA PACIENT (ADMIN vs PACIENT) *@
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="form-group mb-3">
+                    <label asp-for="PatientId" class="control-label fw-bold">Selectează Pacient</label>
+                    <select asp-for="PatientId" class="form-select" asp-items="ViewBag.PatientId">
+                        <option value="">-- Alege un pacient --</option>
+                    </select>
+                    <span asp-validation-for="PatientId" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                @* Pentru pacienti, ascundem campul si afisam doar confirmarea contului *@
+                <div class="alert alert-info mb-3">
+                    <strong>Programare pentru contul:</strong> @User.Identity.Name
+                </div>
+                @* Input ascuns pentru a trimite ID-ul daca e necesar *@
+                <input type="hidden" asp-for="PatientId" />
+            }
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Creează Programarea" class="btn btn-primary px-4" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="text-dark">Înapoi la Listă</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

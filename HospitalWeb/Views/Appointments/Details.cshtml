@@ -1,0 +1,46 @@
+﻿@model HospitalWeb.Models.Appointment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Detalii</h1>
+
+<div>
+    <h4>Programare</h4>
+    <hr />
+    <dl class="row">
+        @* DATA SI ORA PROGRAMARII *@
+        <dt class="col-sm-2">
+            Data și Ora
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AppointmentDate)
+        </dd>
+
+        @* DOCTORUL *@
+        <dt class="col-sm-2">
+            Doctor
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Doctor.FullName <span class="text-muted">(@Model.Doctor.Email)</span>
+        </dd>
+
+        @* PACIENTUL *@
+        <dt class="col-sm-2">
+            Pacient
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Patient.FullName <span class="text-muted">(@Model.Patient.Email)</span>
+        </dd>
+    </dl>
+</div>
+
+<div class="mt-4">
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-dark">Editează</a>
+    }
+
+    <a asp-action="Index" class="btn btn-link text-dark">Înapoi la Listă</a>
+</div>

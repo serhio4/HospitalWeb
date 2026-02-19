@@ -1,0 +1,61 @@
+﻿@model HospitalWeb.Models.Review
+
+@{
+    ViewData["Title"] = "Adauga Recenzie";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">✍️ Scrie o Recenzie</h4>
+                </div>
+                <div class="card-body">
+
+                    @if (ViewData["AppointmentInfo"] != null)
+                    {
+                        <div class="alert alert-info">
+                            <strong>Programare:</strong> @ViewData["AppointmentInfo"]
+                        </div>
+                    }
+
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <input type="hidden" asp-for="AppointmentId" />
+
+                        <div class="mb-3">
+                            <label asp-for="Rating" class="form-label fw-bold">Nota acordata:</label>
+                            <select asp-for="Rating" class="form-select">
+                                <option value="5">⭐⭐⭐⭐⭐ - Excelent (5)</option>
+                                <option value="4">⭐⭐⭐⭐ - Foarte Bun (4)</option>
+                                <option value="3">⭐⭐⭐ - Bun (3)</option>
+                                <option value="2">⭐⭐ - Slab (2)</option>
+                                <option value="1">⭐ - Foarte Slab (1)</option>
+                            </select>
+                            <span asp-validation-for="Rating" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Comment" class="form-label fw-bold">Comentariu:</label>
+                            <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Cum a decurs vizita?"></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <input type="submit" value="Trimite Recenzia" class="btn btn-success" />
+                            <a asp-controller="Appointments" asp-action="Index" class="btn btn-secondary">Anuleaza</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

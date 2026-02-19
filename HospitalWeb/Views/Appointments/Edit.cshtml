@@ -1,0 +1,66 @@
+﻿@model HospitalWeb.Models.Appointment
+
+@{
+    ViewData["Title"] = "Editare Programare";
+}
+
+<h1>Editare Programare</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <input type="hidden" asp-for="Status" />
+
+            <div class="form-group mb-3">
+                <label asp-for="AppointmentDate" class="control-label fw-bold">Data Programarii</label>
+                <input asp-for="AppointmentDate" class="form-control" />
+                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DoctorId" class="control-label fw-bold">Doctor</label>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <select asp-for="DoctorId" class="form-control" asp-items="ViewBag.DoctorId"></select>
+                }
+                else
+                {
+                    <input type="text" class="form-control" value="@Model.Doctor?.FullName" readonly />
+                    <input type="hidden" asp-for="DoctorId" />
+                }
+                <span asp-validation-for="DoctorId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="PatientId" class="control-label fw-bold">Pacient</label>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId"></select>
+                }
+                else
+                {
+                    <input type="text" class="form-control" value="@Model.Patient?.FullName" readonly />
+                    <input type="hidden" asp-for="PatientId" />
+                }
+                <span asp-validation-for="PatientId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Salveaza Modificarile" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary ms-2">Inapoi la Lista</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

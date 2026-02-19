@@ -1,0 +1,67 @@
+﻿@model IEnumerable<HospitalWeb.Models.Review>
+
+@{
+    ViewData["Title"] = "Recenzii";
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h1 class="display-5">Părerile Pacienților</h1>
+        <p class="text-muted">Vezi ce spun alții despre serviciile noastre</p>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0 text-primary">
+                                <i class="bi bi-person-badge-fill"></i> @item.Appointment.Doctor.FullName
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="card-body px-4">
+                        <div class="mb-2 text-warning fs-5">
+                            @for (int i = 0; i < item.Rating; i++)
+                            {
+                                <span>⭐</span>
+                            }
+                            @for (int i = item.Rating; i < 5; i++)
+                            {
+                                <span class="text-muted" style="opacity:0.3">★</span>
+                            }
+                        </div>
+
+                        <p class="card-text text-secondary">
+                            " @item.Comment "
+                        </p>
+
+                        <small class="text-muted">
+                            Pacient: @item.Appointment.Patient.FullName
+                        </small>
+                    </div>
+
+                    @if (User.IsInRole("Admin") || User.Identity.Name == item.Appointment.Patient.Email)
+                    {
+                        <div class="card-footer bg-light border-0 text-end">
+                            <div class="btn-group btn-group-sm">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary" title="Editeaza">✏️ Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Sterge">🗑️ Sterge</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center">
+            Nu există recenzii momentan. Fii primul care lasă una!
+        </div>
+    }
+</div>

@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Acasa";
+}
+
+<div class="text-center mt-5">
+
+    @* SCENARIUL 1: VIZITATOR (NELOGAT) *@
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <h1 class="display-4 text-primary">🏥 Bine ai venit!</h1>
+        <p class="lead mt-3">Platforma noastră te ajută să te programezi rapid la medic.</p>
+        <hr class="my-4">
+
+        <div class="mt-4">
+            <a href="/Identity/Account/Login" class="btn btn-dark btn-lg px-4 mx-2">Intră în Cont</a>
+            <a href="/Identity/Account/Register" class="btn btn-dark btn-lg px-4 mx-2">Creează Cont</a>
+        </div>
+    }
+
+    @* SCENARIUL 2: ESTE ADMIN *@
+    else if (User.IsInRole("Admin"))
+    {
+        <h1 class="display-5">Panou Administrator</h1>
+        <p class="text-muted mb-4">Selectează o acțiune:</p>
+
+        <div class="d-flex justify-content-center flex-wrap">
+            <a asp-controller="Doctors" asp-action="Index" class="btn btn-dark btn-lg mx-2 mb-2">
+                Gestionează Doctori
+            </a>
+            <a asp-controller="Departments" asp-action="Index" class="btn btn-dark btn-lg mx-2 mb-2">
+                Gestionează Secții
+            </a>
+            <a asp-controller="Appointments" asp-action="Index" class="btn btn-dark btn-lg mx-2 mb-2">
+                Toate Programările
+            </a>
+        </div>
+    }
+
+    @* SCENARIUL 3: ESTE DOCTOR *@
+    else if (User.IsInRole("Doctor"))
+    {
+        <h1 class="display-5">Salut, @User.Identity.Name!</h1>
+        <p class="text-muted mb-4">Bine ai revenit pe platformă.</p>
+
+        <div class="mt-4">
+            <a asp-controller="Appointments" asp-action="Index" class="btn btn-dark btn-lg px-5">
+                Vezi Programul Tău
+            </a>
+        </div>
+    }
+
+    @* SCENARIUL 4: ESTE PACIENT *@
+    else
+    {
+        <h1 class="display-5">Bine ai venit!</h1>
+        <p class="text-muted mb-4">Ce dorești să faci astăzi?</p>
+
+        <div class="d-flex justify-content-center flex-wrap">
+            <a asp-controller="Appointments" asp-action="Create" class="btn btn-dark btn-lg mx-2 mb-2">
+                Programare Nouă
+            </a>
+
+            <a asp-controller="Appointments" asp-action="Index" class="btn btn-dark btn-lg mx-2 mb-2">
+                Istoricul Meu
+            </a>
+
+            <a asp-controller="Reviews" asp-action="Index" class="btn btn-dark btn-lg mx-2 mb-2">
+                Vezi Recenzii
+            </a>
+        </div>
+    }
+</div>

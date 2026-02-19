@@ -1,0 +1,184 @@
+﻿@model IEnumerable<HospitalWeb.Models.Appointment>
+@using HospitalWeb.Models
+
+@{
+    ViewData["Title"] = "Programari";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            @* TITLU SIMPLU, FARA BUTOANE *@
+            <h1>
+                @if (User.IsInRole("Doctor"))
+                {
+                    <span>Programul Tău</span>
+                }
+                else if (User.IsInRole("Admin"))
+                {
+                    <span>Administrare Programări</span>
+                }
+                else
+                {
+                    <span>Programările Mele</span>
+                }
+            </h1>
+
+            @* Aici nu mai exista niciun buton. Zona este goala. *@
+        </div>
+
+        @if (!User.IsInRole("Doctor"))
+        {
+            <a asp-action="Create" class="btn btn-success shadow-sm">
+                <i class="bi bi-plus-circle"></i> + Programare Noua
+            </a>
+        }
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Data si Ora</th>
+                        <th>Stare</th>
+
+                        @if (!User.IsInRole("Doctor"))
+                        {
+                            <th>Doctor</th>
+                        }
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+                        {
+                            <th>Pacient</th>
+                            <th>Contact Pacient</th>
+                        }
+
+                        <th class="text-end">Actiuni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">
+                                <strong>@item.AppointmentDate.ToString("dd MMM yyyy")</strong>
+                                <br />
+                                <small class="text-muted">Ora: @item.AppointmentDate.ToString("HH:mm")</small>
+                            </td>
+
+                            <td class="align-middle">
+                                @if (item.Status == AppointmentStatus.Pending)
+                                {
+                                    <span class="badge bg-warning text-dark">In asteptare</span>
+                                }
+                                else if (item.Status == AppointmentStatus.Confirmed)
+                                {
+                                    <span class="badge bg-primary">Confirmata</span>
+                                }
+                                else if (item.Status == AppointmentStatus.Completed)
+                                {
+                                    <span class="badge bg-success">Finalizata</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Anulata</span>
+                                }
+                            </td>
+
+                            @if (!User.IsInRole("Doctor"))
+                            {
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => item.Doctor.FullName)
+                                </td>
+                            }
+
+                            @* --- CODUL DE ANULARE DE AICI  --- *@
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+                            {
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => item.Patient.FullName)
+                                </td>
+                                <td class="align-middle">
+                                    @Html.DisplayFor(modelItem => item.Patient.PhoneNumber)
+                                </td>
+                            }
+
+                            <td class="align-middle text-end">
+
+                                @* 1. BUTONUL DE ANULARE (PENTRU PACIENTI) *@
+                                @if (!User.IsInRole("Doctor") && !User.IsInRole("Admin"))
+                                {
+                                    if (item.AppointmentDate > DateTime.Now && item.Status != AppointmentStatus.Cancelled && item.Status != AppointmentStatus.Completed)
+                                    {
+                                        <form asp-action="Cancel" asp-route-id="@item.Id" method="post" class="d-inline me-1" onsubmit="return confirm('Sigur anulezi programarea?');">
+                                            <button type="submit" class="btn btn-sm btn-danger">Anulează</button>
+                                        </form>
+                                    }
+                                }
+
+                                @* 2. BUTOANELE PENTRU DOCTOR (Status) *@
+                                @if (User.IsInRole("Doctor"))
+                                {
+                                    @if (item.Status == AppointmentStatus.Pending)
+                                    {
+                                        <form asp-action="ChangeStatus" method="post" class="d-inline mb-1">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="status" value="@AppointmentStatus.Confirmed" />
+                                            <button type="submit" class="btn btn-sm btn-success">✅ Confirma</button>
+                                        </form>
+                                    }
+                                    @if (item.Status == AppointmentStatus.Confirmed)
+                                    {
+                                        <form asp-action="ChangeStatus" method="post" class="d-inline mb-1">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="status" value="@AppointmentStatus.Completed" />
+                                            <button type="submit" class="btn btn-sm btn-primary">🏁 Finalizeaza</button>
+                                        </form>
+                                    }
+                                }
+
+                                @* 3. GRUPUL DE BUTOANE COMUNE (Info, Edit, Delete, Recenzie) *@
+                                <div class="btn-group" role="group">
+                                    @if (!User.IsInRole("Doctor") && item.Status == AppointmentStatus.Completed)
+                                    {
+                                        @if (item.Review == null)
+                                        {
+                                            // Daca nu exista recenzie, aratam butonul galben pentru a adauga
+                                            <a asp-controller="Reviews" asp-action="Create" asp-route-appointmentId="@item.Id" class="btn btn-sm btn-warning" title="Lasă o recenzie">
+                                                ⭐ Recenzie
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            // Daca recenzia exista deja in baza de date, afisam butonul verde dezactivat
+                                            <span class="btn btn-sm btn-outline-success disabled" title="Ai lăsat deja o recenzie">
+                                                ✔️ Adăugată
+                                            </span>
+                                        }
+                                    }
+
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Info</a>
+
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">Edit</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Sterge</a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3 text-center">
+            Nu exista nicio programare inregistrata momentan.
+        </div>
+    }
+</div>
