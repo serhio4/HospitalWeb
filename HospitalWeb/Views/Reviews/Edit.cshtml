@@ -1,12 +1,12 @@
 ﻿@model HospitalWeb.Models.Review
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editare Recenzie";
 }
 
-<h1>Edit</h1>
+<h1>Editare</h1>
 
-<h4>Review</h4>
+<h4>Recenzie</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -25,14 +25,14 @@
             </div>
             <input type="hidden" asp-for="AppointmentId" />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Salvează" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Înapoi la Listă</a>
 </div>
 
 @section Scripts {
