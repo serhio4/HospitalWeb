@@ -1,12 +1,12 @@
 ﻿@model HospitalWeb.Models.Patient
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Adaugă Pacient";
 }
 
-<h1>Create</h1>
+<h1>Adaugă</h1>
 
-<h4>Patient</h4>
+<h4>Pacient</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -28,14 +28,14 @@
                 <span asp-validation-for="CNP" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Creează" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Înapoi la Listă</a>
 </div>
 
 @section Scripts {
